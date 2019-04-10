@@ -24,4 +24,8 @@ class TextController extends Controller
     	var_dump($res1);
     	return view('Test.test');
     }
+    //微信接受
+    public function wenxin_vaild(){
+        echo $_GET['echostr'];
+    }
 }

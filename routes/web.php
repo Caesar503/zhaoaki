@@ -16,3 +16,6 @@ Route::get('/', function () {
 });
 //测试
 Route::any('/Text/test','Test\TextController@test');
+
+//微信接口
+Route::get('/Wenxin/vaild','Test\TextController@wenxin_vaild');
