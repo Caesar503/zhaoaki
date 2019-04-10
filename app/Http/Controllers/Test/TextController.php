@@ -57,11 +57,11 @@ class TextController extends Controller
             $local_user = App\Model\WxUser::where('openid',$oid)->first();
             // dd($local_user);
             if($local_user){//如果用户已经存在
-                echo '<xml><ToUserName><![CDATA['.$oid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $local_user->nickname .']]></Content></xml>';
+                echo "<xml><ToUserName><![CDATA[$oid]]></ToUserName><FromUserName><![CDATA[$gzhid]]></FromUserName><CreateTime>".time()."</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[欢迎回来{$local_user->nickname}]]></Content></xml>";
             }else{//不存在
                 // 通过openid 获取用户的信息
                 $info = $this->get_userinfo($oid);
-                // print_r($info);
+                // print_r($info);die;
                 $u_info = [
                     'openid'    => $info['openid'],
                     'nickname'  => $info['nickname'],
@@ -69,7 +69,7 @@ class TextController extends Controller
                     'headimgurl'  => $info['headimgurl'],
                 ];
                 $id =  App\Model\WxUser::insertGetId($u_info);
-                echo '<xml><ToUserName><![CDATA['.$oid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $info['nickname'] .']]></Content></xml>';
+                echo "<xml><ToUserName><![CDATA[$oid]]></ToUserName><FromUserName><![CDATA[$gzhid]]></FromUserName><CreateTime>".time()."</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[欢迎关注{$info['nickname']}]]></Content></xml>";
             }
         }
         
@@ -82,7 +82,7 @@ class TextController extends Controller
         $k = 'access_token';
         $token = Redis::get($k);
         if($token==''){
-            echo 'no chche:'."<br>";
+            // echo 'no chche:'."<br>";
             $url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WX_APPID').'&secret='.env('WX_APPSECRET');
             // echo env('WX_APPID');die;
             // echo $url;die;
@@ -102,7 +102,6 @@ class TextController extends Controller
         // dd($l);
         $data = file_get_contents($l);
         $u = json_decode($data,true);
-     //  dd($u);
         return $u;
     }
 }
