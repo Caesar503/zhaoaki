@@ -26,4 +26,4 @@ Route::get('/Wenxin/vaild','Test\TextController@wenxin_vaild');
 //微信第二次接口
 Route::post('/Wenxin/vaild','Test\TextController@wenxin_vailde');
 //获取access_token
-Route::post('Wenxin/access','Test\TextController@get_access');
+Route::get('Wenxin/access','Test\TextController@get_access');

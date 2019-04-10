@@ -20,6 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         "Wenxin/vaild",
-        "Wenxin/access"
+        
     ];
 }

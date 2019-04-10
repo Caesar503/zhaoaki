@@ -80,17 +80,16 @@ class TextController extends Controller
     //获取access_token
     public function get_access(){
         $k = 'access_token';
-        // Redis::delete($k);
         $token = Redis::get($k);
         if($token==''){
-            // echo 'no chche:'."<br>";
+            echo 'no chche:'."<br>";
             $url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WX_APPID').'&secret='.env('WX_APPSECRET');
             // echo env('WX_APPID');die;
             // echo $url;die;
             $response = file_get_contents($url);
-            // dd($response);
+             // dd($response);
             $res = json_decode($response,true);
-            print_r($res);die;
+            // print_r($res);die;
             $token = $res['access_token'];
             Redis::set($k,$token);
             Redis::expire($k,3600);
@@ -103,6 +102,7 @@ class TextController extends Controller
         // dd($l);
         $data = file_get_contents($l);
         $u = json_decode($data,true);
+     //  dd($u);
         return $u;
     }
 }
