@@ -40,9 +40,13 @@ class TextController extends Controller
         // echo '消息类型：'.$res->MsgType.'<br>';
         // echo '事件类型：'.$res->Event.'<br>';
         // echo 'id：'.$res->EventKey.'<br>';die;
+        $time = date('Y-m-d H:i:s',time());
+        $str = $time . $content . "\n";
+        //写入日志
+        file_put_contents("logs/wx_event.log",$str,FILE_APPEND);
 
         //公众号的id
-        $wzhid = $res->ToUserName;
+        $gzhid = $res->ToUserName;
         //用户的id
         $oid = $res->FromUserName;
         // echo $oid;
@@ -53,7 +57,7 @@ class TextController extends Controller
             $local_user = App\Model\WxUser::where('openid',$oid)->first();
             // dd($local_user);
             if($local_user){//如果用户已经存在
-
+                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $local_user['nickname'] .']]></Content></xml>';
             }else{//不存在
                 // 通过openid 获取用户的信息
                 $info = $this->get_userinfo($oid);
@@ -64,15 +68,14 @@ class TextController extends Controller
                     'sex'  => $info['sex'],
                     'headimgurl'  => $info['headimgurl'],
                 ];
-                print_r($u_info);die;
+                $id =  App\Model\WxUser::insertGetId($u_info);
+                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $u['nickname'] .']]></Content></xml>';
             }
         }
         
 
-        $time = date('Y-m-d H:i:s',time());
-        $str = $time . $content . "\n";
-        file_put_contents("logs/wx_event.log",$str,FILE_APPEND);
-        echo 'success';
+        
+        // echo 'success';
     }
     //获取access_token
     public function get_access(){
@@ -84,13 +87,12 @@ class TextController extends Controller
             $url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WX_APPID').'&secret='.env('WX_APPSECRET');
             // echo env('WX_APPID');die;
             // echo $url;die;
-            $key = 'wx_access_token';
             $response = file_get_contents($url);
             // dd($response);
             $res = json_decode($response,true);
-            Redis::set($k,$res['access_token']);
-            Redis::expire($k,3600);
             $token = $res['access_token'];
+            Redis::set($k,$token);
+            Redis::expire($k,3600);
         }
         return $token;
     }
