@@ -14,6 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/info', function () {
+    phpinfo();
+});
 //测试
 Route::any('/Text/test','Test\TextController@test');
 
@@ -22,7 +25,5 @@ Route::any('/Text/test','Test\TextController@test');
 Route::get('/Wenxin/vaild','Test\TextController@wenxin_vaild');
 //微信第二次接口
 Route::post('/Wenxin/vaild','Test\TextController@wenxin_vailde');
-
-Route::get('/info', function () {
-    phpinfo();
-});
+//获取access_token
+Route::get('Wenxin/access','Test\TextController@get_access');
