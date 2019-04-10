@@ -24,8 +24,16 @@ class TextController extends Controller
     	var_dump($res1);
     	return view('Test.test');
     }
-    //微信接受
+    //微信第一次接受
     public function wenxin_vaild(){
         echo $_GET['echostr'];
+    }
+    //微信第二次接受
+    public function wenxin_vailde(){
+        $contents = file_get_contents("php://input");
+        $time = date('Y-m-d H:i:s',time());
+        $str = $time . $contents . "\n";
+        file_put_contents("logs/wx_event.log",$str,FILE_APPEND);
+        echo 'success';
     }
 }
