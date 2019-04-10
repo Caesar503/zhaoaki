@@ -34,12 +34,40 @@ class TextController extends Controller
         //解析xml数据
         $res  = simplexml_load_string($content);
         //公众号的id
-        echo '公众号的id：'.$res->ToUserName.'<br>';
-        echo '用户的openid'.$res->FormUserName.'<br>';
-        echo '时间戳：'.$res->CreateTime.'<br>';
-        echo '消息类型：'.$res->MsgType.'<br>';
-        echo '事件类型：'.$res->Event.'<br>';
-        echo 'id：'.$res->EventKey.'<br>';die;
+        // echo '公众号的id：'.$res->ToUserName.'<br>';
+        // echo '用户的openid'.$res->FromUserName.'<br>';
+        // echo '时间戳：'.$res->CreateTime.'<br>';
+        // echo '消息类型：'.$res->MsgType.'<br>';
+        // echo '事件类型：'.$res->Event.'<br>';
+        // echo 'id：'.$res->EventKey.'<br>';die;
+
+        //公众号的id
+        $wzhid = $res->ToUserName;
+        //用户的id
+        $oid = $res->FromUserName;
+        // echo $oid;
+        //事件类型
+        $event = $res->Event;
+
+        if($event=='subscribe'){//扫码关注事件
+            $local_user = App\Model\WxUser::where('openid',$oid)->first();
+            // dd($local_user);
+            if($local_user){//如果用户已经存在
+
+            }else{//不存在
+                // 通过openid 获取用户的信息
+                $info = $this->get_userinfo($oid);
+                // print_r($info);
+                $u_info = [
+                    'openid'    => $info['openid'],
+                    'nickname'  => $info['nickname'],
+                    'sex'  => $info['sex'],
+                    'headimgurl'  => $info['headimgurl'],
+                ];
+                print_r($u_info);die;
+            }
+        }
+        
 
         $time = date('Y-m-d H:i:s',time());
         $str = $time . $content . "\n";
@@ -48,11 +76,30 @@ class TextController extends Controller
     }
     //获取access_token
     public function get_access(){
-        $url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WX_APPID').'APPID&secret='.env('WX_APPSECRET');
-        // echo $url;
-        $key = 'wx_access_token';
-        $response = file_get_contents($url);
-        $res = json_decode($response,true);
-        dd($res);
+        $k = 'access_token';
+        // Redis::delete($k);
+        $token = Redis::get($k);
+        if($token==''){
+            // echo 'no chche:'."<br>";
+            $url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.env('WX_APPID').'&secret='.env('WX_APPSECRET');
+            // echo env('WX_APPID');die;
+            // echo $url;die;
+            $key = 'wx_access_token';
+            $response = file_get_contents($url);
+            // dd($response);
+            $res = json_decode($response,true);
+            Redis::set($k,$res['access_token']);
+            Redis::expire($k,3600);
+            $token = $res['access_token'];
+        }
+        return $token;
+    }
+    //获取用户的信息
+    public function get_userinfo($openid){
+        $l = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$this->get_access()."&openid=".$openid."&lang=zh_CN";
+        // dd($l);
+        $data = file_get_contents($l);
+        $u = json_decode($data,true);
+        return $u;
     }
 }
