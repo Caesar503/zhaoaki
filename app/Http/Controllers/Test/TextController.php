@@ -57,7 +57,7 @@ class TextController extends Controller
             $local_user = App\Model\WxUser::where('openid',$oid)->first();
             // dd($local_user);
             if($local_user){//如果用户已经存在
-                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $local_user['nickname'] .']]></Content></xml>';
+                echo '<xml><ToUserName><![CDATA['.$oid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $local_user->nickname .']]></Content></xml>';
             }else{//不存在
                 // 通过openid 获取用户的信息
                 $info = $this->get_userinfo($oid);
@@ -69,7 +69,7 @@ class TextController extends Controller
                     'headimgurl'  => $info['headimgurl'],
                 ];
                 $id =  App\Model\WxUser::insertGetId($u_info);
-                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $u['nickname'] .']]></Content></xml>';
+                echo '<xml><ToUserName><![CDATA['.$oid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $u['nickname'] .']]></Content></xml>';
             }
         }
         
@@ -90,6 +90,7 @@ class TextController extends Controller
             $response = file_get_contents($url);
             // dd($response);
             $res = json_decode($response,true);
+            // print_r($res);die;
             $token = $res['access_token'];
             Redis::set($k,$token);
             Redis::expire($k,3600);
