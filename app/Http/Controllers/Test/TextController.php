@@ -69,7 +69,7 @@ class TextController extends Controller
                     'headimgurl'  => $info['headimgurl'],
                 ];
                 $id =  App\Model\WxUser::insertGetId($u_info);
-                echo '<xml><ToUserName><![CDATA['.$oid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $u['nickname'] .']]></Content></xml>';
+                echo '<xml><ToUserName><![CDATA['.$oid.']]></ToUserName><FromUserName><![CDATA['.$gzhid.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $info['nickname'] .']]></Content></xml>';
             }
         }
         
@@ -90,7 +90,7 @@ class TextController extends Controller
             $response = file_get_contents($url);
             // dd($response);
             $res = json_decode($response,true);
-            // print_r($res);die;
+            print_r($res);die;
             $token = $res['access_token'];
             Redis::set($k,$token);
             Redis::expire($k,3600);
