@@ -63,7 +63,7 @@ class TextController extends Controller
                 $info = $this->get_userinfo($oid);
                 // print_r($info);die;
                 $u_info = [
-                    'openid'    => $info['openid'],
+                    'openid'    => $oid,
                     'nickname'  => $info['nickname'],
                     'sex'  => $info['sex'],
                     'headimgurl'  => $info['headimgurl'],
