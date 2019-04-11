@@ -85,9 +85,7 @@ class WXController extends Controller
         $grid->openid('Openid');
         $grid->nickname('Nickname');
         $grid->sex('Sex');
-        $grid->headimgurl('Headimgurl')->display(function($img){
-            return "<img src=".$img.">";
-        });
+        $grid->headimgurl('Headimgurl')->image();
 
         return $grid;
     }

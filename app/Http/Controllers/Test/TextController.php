@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Redis;
 use App;
+use GuzzleHttp\Client;
 class TextController extends Controller
 {
     public function test(){
@@ -52,6 +53,11 @@ class TextController extends Controller
         // echo $oid;
         //事件类型
         $event = $res->Event;
+        //消息类型
+        $MsgType = $res->MsgType;
+        // echo $MsgType;die;
+
+
 
         if($event=='subscribe'){//扫码关注事件
             $local_user = App\Model\WxUser::where('openid',$oid)->first();
@@ -71,6 +77,8 @@ class TextController extends Controller
                 $id =  App\Model\WxUser::insertGetId($u_info);
                 echo "<xml><ToUserName><![CDATA[$oid]]></ToUserName><FromUserName><![CDATA[$gzhid]]></FromUserName><CreateTime>".time()."</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[欢迎关注{$info['nickname']}]]></Content></xml>";
             }
+        }else if($MsgType=='text'){
+                echo 1111;
         }
         
 
@@ -103,5 +111,44 @@ class TextController extends Controller
         $data = file_get_contents($l);
         $u = json_decode($data,true);
         return $u;
+    }
+    //创建公众号菜单
+    public function create_menu(){
+        //拼接借口
+        $url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=".$this->get_access();
+        // echo $url;die;
+        // 接口数据
+        $data = [
+            'button'=>[
+               [
+                 'type'=>'click',
+                    'name'=>'赵恺',
+                    'key'=>'key_menu_001'
+               ],
+
+               [
+                 'type'=>'click',
+                    'name'=>'wangjiao',
+                    'key'=>'key_menu_002'
+               ],
+            ]
+        ];
+        $json_data = json_encode($data,JSON_UNESCAPED_UNICODE);
+        // $menu = urldecode($json_data);
+                        // dd($menu);
+        // 发送请求
+        $client = new Client();
+        $res1 = $client->request('POST',$url,[
+            'body'=>$json_data
+        ]);
+                        // dd($res1);
+        // 处理请求
+        $res = $res1->getBody();
+        $res = json_decode($res);
+        if($res->errcode == 0){
+            echo "创建菜单成功";
+        }else{
+            echo "创建菜单失败";
+        }
     }
 }

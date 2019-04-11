@@ -27,3 +27,6 @@ Route::get('/Wenxin/vaild','Test\TextController@wenxin_vaild');
 Route::post('/Wenxin/vaild','Test\TextController@wenxin_vailde');
 //获取access_token
 Route::get('Wenxin/access','Test\TextController@get_access');
+
+//菜单
+Route::get('Wenxin/create_menu','Test\TextController@create_menu');
