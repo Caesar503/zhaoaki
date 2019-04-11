@@ -531,3 +531,10 @@
 <Event><![CDATA[subscribe]]></Event>
 <EventKey><![CDATA[]]></EventKey>
 </xml>
+2019-04-11 10:51:04<xml><ToUserName><![CDATA[gh_58f350a932b4]]></ToUserName>
+<FromUserName><![CDATA[oMdU-1ABC-2YgZmzUTBE7qXLTvbw]]></FromUserName>
+<CreateTime>1554949568</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[subscribe]]></Event>
+<EventKey><![CDATA[]]></EventKey>
+</xml>
